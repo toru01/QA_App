@@ -1,10 +1,13 @@
 package jp.techacademy.kikuchi.toru.qa_app;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -18,14 +21,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
-//Favorite処理はここかな
-public class QuestionDetailActivity extends AppCompatActivity  {
+public class QuestionDetailActivity extends AppCompatActivity {
 
     private ListView mListView;
     private Question mQuestion;
     private QuestionDetailListAdapter mAdapter;
+    private DatabaseReference mDatabase;
+    private ProgressDialog mProgress;
     //private ImageButton fav_button;
 
     private DatabaseReference mAnswerRef;
@@ -35,7 +40,7 @@ public class QuestionDetailActivity extends AppCompatActivity  {
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             HashMap map = (HashMap) dataSnapshot.getValue();
 
-            
+
             String answerUid = dataSnapshot.getKey();
 
             for (Answer answer : mQuestion.getAnswers()) {
@@ -102,20 +107,42 @@ public class QuestionDetailActivity extends AppCompatActivity  {
         mAdapter.notifyDataSetChanged();
 
         final ImageButton fav_button  = (ImageButton) findViewById(R.id.Star);
+        //fav_button.setActivated(false);
 
-        //fav_button.g
-        if(fav_button!=null) {
-            fav_button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    //fav_button.setActivated(false);
-                    if(mQuestion.getStar()=="1") {
-                        fav_button.setActivated(true);
-                    }else{
-                        fav_button.setActivated(false);
-                    }
+
+
+        //ViewOnClickListenerというインターフェースなので、ここに処理して欲しい内容を書いて参照させるクリックして欲しいクラス
+        mAdapter.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                String vStar;
+                //fav_button.setActivated(false);
+                if(mQuestion.getStar().equals("1")==true) {
+                    mQuestion.setStar("0");
+                    vStar = "1";
+                    v.setActivated(true);
+                }else{
+                    mQuestion.setStar("1");
+                    vStar = "0";
+                    v.setActivated(false);
                 }
-            });
-        }
+                //Firebase側に値をPUSHする動きが必要
+                // ログイン済みのユーザーを収録する
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                if (user == null) {
+                    // ログインしていなければログイン画面に遷移させる
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                } else {
+
+                    mDatabase = FirebaseDatabase.getInstance().getReference();
+                    mDatabase.child(Const.ContentsPATH).child(String.valueOf(mQuestion.getGenre())).child(mQuestion.getQuestionUid()).child("favorite").setValue(vStar);
+
+                }
+            }
+        });
+        //
         //fav_button.setOnClickListener(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

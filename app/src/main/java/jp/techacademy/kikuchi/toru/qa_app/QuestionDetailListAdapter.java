@@ -18,18 +18,24 @@ public class QuestionDetailListAdapter extends BaseAdapter {
     private final static int TYPE_ANSWER = 1;
 
     private LayoutInflater mLayoutInflater = null;
-    private Question mQustion;
+    private Question mQuestion;
 
     private ImageButton mFavButton;
+    private View.OnClickListener listener;
 
     public QuestionDetailListAdapter(Context context, Question question) {
         mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mQustion = question;
+        mQuestion = question;
     }
+
+    public void setOnClickListener(View.OnClickListener listener){
+        this.listener = listener;
+    }
+
 
     @Override
     public int getCount() {
-        return 1 + mQustion.getAnswers().size();
+        return 1 + mQuestion.getAnswers().size();
     }
 
     @Override
@@ -48,7 +54,7 @@ public class QuestionDetailListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return mQustion;
+        return mQuestion;
     }
 
     @Override
@@ -63,8 +69,8 @@ public class QuestionDetailListAdapter extends BaseAdapter {
             if (convertView == null) {
                 convertView = mLayoutInflater.inflate(R.layout.list_question_detail, parent, false);
             }
-            String body = mQustion.getBody();
-            String name = mQustion.getName();
+            String body = mQuestion.getBody();
+            String name = mQuestion.getName();
 
             TextView bodyTextView = (TextView) convertView.findViewById(R.id.bodyTextView);
             bodyTextView.setText(body);
@@ -73,13 +79,21 @@ public class QuestionDetailListAdapter extends BaseAdapter {
             nameTextView.setText(name);
 
             ImageButton mImageButton = (ImageButton) convertView.findViewById(R.id.Star);
-            if(mQustion.getStar()=="1"){
+            if(mQuestion.getStar().equals("1")==true) {
+                mImageButton.setActivated(true);
+            }else{
+                mImageButton.setActivated(false);
+            }
+            if(listener!=null) {
+                mImageButton.setOnClickListener(listener);
+            }
+/*            if(mQuestion.getStar()=="1"){
                 mImageButton.setActivated(true);
             } else{
                 mImageButton.setActivated(false);
-            }
+            }*/
 
-            byte[] bytes = mQustion.getImageBytes();
+            byte[] bytes = mQuestion.getImageBytes();
             if (bytes.length != 0) {
                 Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length).copy(Bitmap.Config.ARGB_8888, true);
                 ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
@@ -90,7 +104,7 @@ public class QuestionDetailListAdapter extends BaseAdapter {
                 convertView = mLayoutInflater.inflate(R.layout.list_answer, parent, false);
             }
 
-            Answer answer = mQustion.getAnswers().get(position - 1);
+            Answer answer = mQuestion.getAnswers().get(position - 1);
             String body = answer.getBody();
             String name = answer.getName();
 

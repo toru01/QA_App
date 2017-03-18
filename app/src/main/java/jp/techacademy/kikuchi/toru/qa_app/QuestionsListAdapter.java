@@ -51,7 +51,7 @@ public class QuestionsListAdapter extends BaseAdapter{
         nameText.setText(mQuestionArrayList.get(position).getName());
 
         ImageView StarButton = (ImageView) convertView.findViewById(R.id.StarView);
-        if(mQuestionArrayList.get(position).getStar()=="1"){
+        if(mQuestionArrayList.get(position).getStar().equals("1")){
             StarButton.setActivated(true);
         } else{
             StarButton.setActivated(false);

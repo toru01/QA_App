@@ -40,6 +40,10 @@ public class Question implements Serializable {
         return mStar;
     }
 
+    public void setStar(String star){
+        mStar = star;
+    }
+
     public int getGenre() {
         return mGenre;
     }

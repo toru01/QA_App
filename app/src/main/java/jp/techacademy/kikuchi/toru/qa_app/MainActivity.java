@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 // ジャンルを選択していない場合（mGenre == 0）はエラーを表示するだけ
-                if (mGenre == 99) {
+                if (mGenre == -1) {
                     Snackbar.make(view, "お気に入りでは追加できません。ジャンルを選択して下さい", Snackbar.LENGTH_LONG).show();
                     return;
                 }
@@ -201,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_favorite) {
                     mToolbar.setTitle("お気に入り");
                     //お気に入りはジャンルではないため
-                    mGenre = 99;
+                    mGenre = -1;
                 }
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -241,6 +242,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        mQuestionArrayList.clear();
+        mAdapter.setQuestionArrayList(mQuestionArrayList);
+        mListView.setAdapter(mAdapter);
+        // 選択したジャンルにリスナーを登録する
+        if (mGenreRef != null) {
+            mGenreRef.removeEventListener(mEventListener);
+        }
+        mGenreRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(mGenre));
+        mGenreRef.addChildEventListener(mEventListener);
+     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
