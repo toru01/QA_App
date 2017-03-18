@@ -3,10 +3,12 @@ package jp.techacademy.kikuchi.toru.qa_app;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -47,6 +49,13 @@ public class QuestionsListAdapter extends BaseAdapter{
 
         TextView nameText = (TextView) convertView.findViewById(R.id.nameTextView);
         nameText.setText(mQuestionArrayList.get(position).getName());
+
+        ImageView StarButton = (ImageView) convertView.findViewById(R.id.StarView);
+        if(mQuestionArrayList.get(position).getStar()=="1"){
+            StarButton.setActivated(true);
+        } else{
+            StarButton.setActivated(false);
+        }
 
         TextView resText = (TextView) convertView.findViewById(R.id.resTextView);
         int resNum = mQuestionArrayList.get(position).getAnswers().size();

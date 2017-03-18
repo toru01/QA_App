@@ -28,11 +28,16 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.prefs.Preferences;
 /*
 ログインしている場合に質問詳細画面に「お気に入り」ボタンを表示させてください
+　ToDo:☆をDetailに追加 -> Firebaes側に設定値を設ける
 ログインしている場合に「お気に入り」が既にタップされているかどうかをボタンの見た目で判断できるようにしてください
+　ToDo:★を一覧に追加
 「お気に入り」質問の一覧画面を作成してください
+　ToDo:「お気に入り」を追加 -> Done
 ログインしている場合にドロワーメニューに「お気に入り」一覧画面へ遷移するリンクを追加してください
+　ToDo:左から出てくるところに「お気に入り」を追加
  */
 
 public class MainActivity extends AppCompatActivity {
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
             String body = (String) map.get("body");
             String name = (String) map.get("name");
             String uid = (String) map.get("uid");
+            String favorite = (String) map.get("favorite");
             String imageString = (String) map.get("image");
             byte[] bytes;
             if (imageString != null) {
@@ -76,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            Question question = new Question(title, body, name, uid, dataSnapshot.getKey(), mGenre, bytes, answerArrayList);
+            Question question = new Question(title, body, name, uid, dataSnapshot.getKey(), favorite, mGenre, bytes, answerArrayList);
             mQuestionArrayList.add(question);
             mAdapter.notifyDataSetChanged();
         }
@@ -124,12 +130,17 @@ public class MainActivity extends AppCompatActivity {
     };
     // --- ここまで追加する ---
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        //Preferencesからお気に入りを取得する
+        //mPrefs = Gdx.app.getPreferences("jp.techacademy.taro.kirameki.jumpactiongame");
+        //mHighScore = mPrefs.getInteger("HIGHSCORE", 0);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -138,6 +149,11 @@ public class MainActivity extends AppCompatActivity {
                 // ジャンルを選択していない場合（mGenre == 0）はエラーを表示するだけ
                 if (mGenre == 0) {
                     Snackbar.make(view, "ジャンルを選択して下さい", Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+                // ジャンルを選択していない場合（mGenre == 0）はエラーを表示するだけ
+                if (mGenre == 99) {
+                    Snackbar.make(view, "お気に入りでは追加できません。ジャンルを選択して下さい", Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
@@ -182,6 +198,10 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_compter) {
                     mToolbar.setTitle("コンピューター");
                     mGenre = 4;
+                } else if (id == R.id.nav_favorite) {
+                    mToolbar.setTitle("お気に入り");
+                    //お気に入りはジャンルではないため
+                    mGenre = 99;
                 }
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -35,6 +35,7 @@ public class QuestionDetailActivity extends AppCompatActivity  {
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             HashMap map = (HashMap) dataSnapshot.getValue();
 
+            
             String answerUid = dataSnapshot.getKey();
 
             for (Answer answer : mQuestion.getAnswers()) {

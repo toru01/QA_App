@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,6 +47,7 @@ public class QuestionSendActivity extends AppCompatActivity implements View.OnCl
     private EditText mBodyText;
     private ImageView mImageView;
     private Button mSendButton;
+    //private ImageButton mFavButton;
 
     private int mGenre;
     private Uri mPictureUri;
@@ -119,6 +121,7 @@ public class QuestionSendActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
+    //Favoriteボタンはここに拡張
     @Override
     public void onClick(View v) {
         if (v == mImageView) {
@@ -185,6 +188,9 @@ public class QuestionSendActivity extends AppCompatActivity implements View.OnCl
 
                 data.put("image", bitmapString);
             }
+
+            // 登録時のFavStarは最初はfalseにする。
+            data.put("favorite", "0");
 
             genreRef.push().setValue(data, this);
             mProgress.show();

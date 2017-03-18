@@ -7,8 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+//ここにFavoriteボタンを追加
 
 public class QuestionDetailListAdapter extends BaseAdapter {
     private final static int TYPE_QUESTION = 0;
@@ -16,6 +19,8 @@ public class QuestionDetailListAdapter extends BaseAdapter {
 
     private LayoutInflater mLayoutInflater = null;
     private Question mQustion;
+
+    private ImageButton mFavButton;
 
     public QuestionDetailListAdapter(Context context, Question question) {
         mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -66,6 +71,13 @@ public class QuestionDetailListAdapter extends BaseAdapter {
 
             TextView nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
             nameTextView.setText(name);
+
+            ImageButton mImageButton = (ImageButton) convertView.findViewById(R.id.Star);
+            if(mQustion.getStar()=="1"){
+                mImageButton.setActivated(true);
+            } else{
+                mImageButton.setActivated(false);
+            }
 
             byte[] bytes = mQustion.getImageBytes();
             if (bytes.length != 0) {
