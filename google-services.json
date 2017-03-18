@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1023238036591",
+    "firebase_url": "https://qaapp-8e26a.firebaseio.com",
+    "project_id": "qaapp-8e26a",
+    "storage_bucket": "qaapp-8e26a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1023238036591:android:9e34a806b1b93ec6",
+        "android_client_info": {
+          "package_name": "jp.techacademy.kikuchi.toru.qa_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1023238036591-6h8itlfqovj877f2gh37egnvc2vdc8nl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbCx3IjHt8puqy9hIDczXhKbPgXfiY2mY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
