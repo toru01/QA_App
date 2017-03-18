@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,11 +19,14 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
-public class QuestionDetailActivity extends AppCompatActivity {
+
+//Favorite処理はここかな
+public class QuestionDetailActivity extends AppCompatActivity  {
 
     private ListView mListView;
     private Question mQuestion;
     private QuestionDetailListAdapter mAdapter;
+    //private ImageButton fav_button;
 
     private DatabaseReference mAnswerRef;
 
@@ -70,6 +74,15 @@ public class QuestionDetailActivity extends AppCompatActivity {
         }
     };
 
+/*
+    public void onClick(View v) {
+        if (mQuestion.getStar() == "1") {
+            fav_button.setActivated(true);
+        } else{
+            fav_button.setActivated(false);
+        }
+    }*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +99,23 @@ public class QuestionDetailActivity extends AppCompatActivity {
         mAdapter = new QuestionDetailListAdapter(this, mQuestion);
         mListView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
+
+        final ImageButton fav_button  = (ImageButton) findViewById(R.id.Star);
+
+        //fav_button.g
+        if(fav_button!=null) {
+            fav_button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //fav_button.setActivated(false);
+                    if(mQuestion.getStar()=="1") {
+                        fav_button.setActivated(true);
+                    }else{
+                        fav_button.setActivated(false);
+                    }
+                }
+            });
+        }
+        //fav_button.setOnClickListener(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
