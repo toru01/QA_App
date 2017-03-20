@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
             HashMap map = (HashMap) dataSnapshot.getValue();
             String title = (String) map.get("title");
             String body = (String) map.get("body");
@@ -94,10 +96,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            if(favorite.equals("1") == true) {
-                Question question = new Question(title, body, name, uid, dataSnapshot.getKey(), favorite, g, bytes, answerArrayList);
-                mQuestionArrayList.add(question);
-                mAdapter.notifyDataSetChanged();
+            if(uid.equals(user.getUid()) == true) {
+                if (favorite.equals("1") == true) {
+                    Question question = new Question(title, body, name, uid, dataSnapshot.getKey(), favorite, g, bytes, answerArrayList);
+                    mQuestionArrayList.add(question);
+                    mAdapter.notifyDataSetChanged();
+                }
             }
         }
         @Override
@@ -145,6 +149,9 @@ public class MainActivity extends AppCompatActivity {
     private ChildEventListener mEventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            //Log.v("QA",user.getUid());
+
             HashMap map = (HashMap) dataSnapshot.getValue();
             String title = (String) map.get("title");
             String body = (String) map.get("body");
@@ -171,9 +178,11 @@ public class MainActivity extends AppCompatActivity {
                     answerArrayList.add(answer);
                 }
             }
-            Question question = new Question(title, body, name, uid, dataSnapshot.getKey(), favorite, mGenre, bytes, answerArrayList);
-            mQuestionArrayList.add(question);
-            mAdapter.notifyDataSetChanged();
+            if(uid.equals(user.getUid()) == true) {
+                Question question = new Question(title, body, name, uid, dataSnapshot.getKey(), favorite, mGenre, bytes, answerArrayList);
+                mQuestionArrayList.add(question);
+                mAdapter.notifyDataSetChanged();
+            }
         }
 
         @Override
@@ -363,42 +372,47 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        // 質問のリストをクリアしてから再度Adapterにセットし、AdapterをListViewにセットし直す
-        mQuestionArrayList.clear();
-        //mQuestionArrayList.clear();
-        mAdapter.setQuestionArrayList(mQuestionArrayList);
-        mListView.setAdapter(mAdapter);
-        if (mGenreRef != null) {
-            mGenreRef.removeEventListener(mEventListener);
-        }
-        if (mFavRef != null) {
-            mFavRef.removeEventListener(mFavoriteListener);
-        }
-        //お気に入り一覧の取得
-        if(mGenre==-1){
+        // ログイン済みのユーザーを収録する
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if(user == null){
-                Snackbar.make(mListView,"ログインを先にしてください",Snackbar.LENGTH_SHORT).show();
-            }
-
-            //Log.v("QA",String.valueOf(mQuestionArrayList.size()));
+        if (user == null) {
+            // ログインしていなければログイン画面に遷移させる
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+        } else {
             // 質問のリストをクリアしてから再度Adapterにセットし、AdapterをListViewにセットし直す
-            // 選択したジャンルにリスナーを登録する
-            mFavRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(1));
-            mFavRef.addChildEventListener(mFavoriteListener);
-            mFavRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(2));
-            mFavRef.addChildEventListener(mFavoriteListener);
-            mFavRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(3));
-            mFavRef.addChildEventListener(mFavoriteListener);
-            mFavRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(4));
-            mFavRef.addChildEventListener(mFavoriteListener);
+            mQuestionArrayList.clear();
+            //mQuestionArrayList.clear();
+            mAdapter.setQuestionArrayList(mQuestionArrayList);
+            mListView.setAdapter(mAdapter);
+            if (mGenreRef != null) {
+                mGenreRef.removeEventListener(mEventListener);
+            }
+            if (mFavRef != null) {
+                mFavRef.removeEventListener(mFavoriteListener);
+            }
+            //お気に入り一覧の取得
+            if (mGenre == -1) {
+                //Snackbar.make(mListView, "ログインを先にしてください", Snackbar.LENGTH_SHORT).show();
 
-        }else {
+                //Log.v("QA",String.valueOf(mQuestionArrayList.size()));
+                // 質問のリストをクリアしてから再度Adapterにセットし、AdapterをListViewにセットし直す
+                // 選択したジャンルにリスナーを登録する
+                mFavRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(1));
+                mFavRef.addChildEventListener(mFavoriteListener);
+                mFavRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(2));
+                mFavRef.addChildEventListener(mFavoriteListener);
+                mFavRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(3));
+                mFavRef.addChildEventListener(mFavoriteListener);
+                mFavRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(4));
+                mFavRef.addChildEventListener(mFavoriteListener);
 
-            mGenreRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(mGenre));
-            mGenreRef.addChildEventListener(mEventListener);
+            } else {
 
+                mGenreRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(mGenre));
+                mGenreRef.addChildEventListener(mEventListener);
+
+            }
         }
      }
 
